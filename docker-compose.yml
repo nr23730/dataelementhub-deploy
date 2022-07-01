@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  rest:
+    restart: unless-stopped
+    build: ./services/rest
+    environment:
+      ISSUER_URI: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
+      JWK_SET_URI: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
+      DB_HOST: db
+      DB_NAME: dehub
+      DB_USER_NAME: dehub
+      DB_USER_PW: ${DB_PASSWORD}
+      KEYCLOAK_CLIENT: ${KEYCLOAK_CLIENT}
+    depends_on:
+      - db
+    networks:
+      - dehub
+    ports:
+      - ${BACKEND_PORT}:8090
+
+  gui:
+    restart: unless-stopped
+    build: ./services/gui
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT}
+      BASE_URL: ${BASE_URL}:${FRONTEND_PORT}
+      MDR_BACKEND_URL: ${BASE_URL}:${BACKEND_PORT}
+    depends_on:
+      - rest
+    networks:
+      - dehub
+    ports:
+      - ${FRONTEND_PORT}:3000
+
+  db:
+    image: postgres:14.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dehub
+      POSTGRES_DB: dehub
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - dehub
+
+networks:
+  dehub:
+
+volumes:
+  db:
