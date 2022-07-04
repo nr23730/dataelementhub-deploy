@@ -17,7 +17,7 @@ services:
     networks:
       - dehub
     ports:
-      - ${BACKEND_PORT}:8090
+      - ${BACKEND_PORT:-8090}:8090
 
   gui:
     restart: unless-stopped
@@ -26,14 +26,14 @@ services:
       KEYCLOAK_URL: ${KEYCLOAK_URL}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT}
-      BASE_URL: ${BASE_URL}:${FRONTEND_PORT}
-      MDR_BACKEND_URL: ${BASE_URL}:${BACKEND_PORT}
+      BASE_URL: ${BASE_URL}:${FRONTEND_PORT:-3000}
+      MDR_BACKEND_URL: ${BASE_URL}:${BACKEND_PORT:-8090}
     depends_on:
       - rest
     networks:
       - dehub
     ports:
-      - ${FRONTEND_PORT}:3000
+      - ${FRONTEND_PORT:-3000}:3000
 
   db:
     image: postgres:14.4-alpine
