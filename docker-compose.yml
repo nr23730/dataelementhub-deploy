@@ -36,7 +36,7 @@ services:
       - ${FRONTEND_PORT:-3000}:3000
 
   db:
-    image: postgres:17.0-alpine
+    image: postgres:17.1-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: dehub
