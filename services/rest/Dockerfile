@@ -1,4 +1,4 @@
-FROM maven:3.9.9-eclipse-temurin-21 as build
+FROM maven:3.9.16-eclipse-temurin-21 as build
 
 RUN git clone https://github.com/imi-frankfurt/maven.git /maven
 WORKDIR /maven
